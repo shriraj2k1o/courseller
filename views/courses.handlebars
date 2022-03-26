@@ -1,0 +1,195 @@
+<style>
+   body{
+       padding: 0;
+   }
+   .row{
+       margin: 0;
+   }
+   .title-wrap{
+       display: flex;
+       align-items: center;
+   }
+   .title-wrap a {
+       /*height: 50%;*/
+       width: 10%;
+   }
+   .go-home {
+        margin-left: auto;
+        
+   }
+   .my-courses{
+       margin: auto 30px;
+   }
+
+</style>
+
+<div id="msgBlock">
+
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12 title-wrap">
+            <h1>My Courses</h1>
+            
+            <a class="btn btn-primary go-home" href="/home">Go HOME</a>
+            <a class="btn btn-info my-courses" href="/history">Buy History</a>
+            <a class="btn btn-success buy-courses" href="/purchase">Buy Course</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <p>{{msg}}</p>
+        </div>
+    </div>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Subject</th>
+                <th>Class Time</th>
+                <th>Std.</th>
+                <th>Fee</th>
+                <th>Update Class</th>
+                <th>Delete Class</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each courses}}
+            <tr>
+                {{!-- {{#each this}} --}}
+                
+                <td>{{subject}}</td>
+                <td>{{classTime}}</td>
+                <td>{{std}}</td>
+                <td>{{fee}}</td>
+                <td>
+                        <button class="btn btn-light" name="update" id="{{_id}}" onclick="updateCourse(this.id)" >Update</button>
+                </td>
+                <td>
+                        <button class="btn btn-danger" name="delete" id="{{_id}}" onclick="deleteCourse(this.id)" >Delete</button>
+                </td>
+                
+                {{!-- {{/each}} --}}
+            </tr>
+            
+            <tr ><td id="update{{_id}}" class="forms" hidden colspan="6">
+                <form id="updateForm{{_id}}">
+                    <label for="classTime{{_id}}">Update Class Timing:</label>
+                    <select   id="classTime{{_id}}">
+                        <option value="10:00 to 11:00">10:00 to 11:00</option>
+                        <option value="11:00 to 12:00">11:00 to 12:00</option>
+                        <option value="04:00 to 05:00">04:00 to 05:00</option>
+                        <option value="05:00 to 06:00">05:00 to 06:00</option>
+                    </select>
+                    <button class="btn btn-success" type="submit" >Update Class</button>
+                </form>
+            </td></tr>
+            <tr ><td id="delete{{_id}}" class="forms" hidden colspan="6">
+                <form  id="deleteForm{{_id}}">
+                    <label for="deleteClass{{_id}}">Delete Class :</label>
+                    <input  type="text" id="deleteClass{{_id}}" readonly value="{{_id}}" >
+                    <button class="btn btn-danger" type="submit" >Delete Class</button>
+                </form>
+            </td></tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+
+<script>
+      let msgBlock = document.querySelector('#msgBlock')
+
+    const updateCourse = (id)=>{
+        $('#update'+id).slideToggle()
+    
+        const updateForm = document.querySelector('#update'+id)
+        updateForm.addEventListener('submit', async(e)=>{
+            e.preventDefault()
+            console.log("UPDATE Class")
+            const courseID = id
+            const classTime = document.querySelector('#classTime'+id).value
+            const response = await fetch('/courses', {
+                method: "PUT",
+                headers: {
+                    'Content-type':'application/json'
+                },
+                body: JSON.stringify({courseID,classTime})
+            })
+            
+            if(response.ok){
+                console.log("RESP OK")
+                const reply = await response.json()
+                
+                const content =  `
+                <div class="alert alert-success">
+                    <strong>Success:</strong>  ${reply.Info.toUpperCase()} . Course id:  ${reply.id}. Reloading...
+                </div>
+                `
+                msgBlock.innerHTML = content
+                setTimeout(()=>{
+                window.location.reload()
+                },5000)
+                
+            }else{
+
+                console.log("RESP NOT OK")
+                
+                const content =  `
+                <div class="alert alert-danger">
+                    <strong>Warning:</strong> ${reply.Error.toUpperCase()} 
+                </div>
+                `
+                msgBlock.innerHTML = content
+                
+            }
+        })
+
+    }
+    const deleteCourse = (id)=>{
+        $('#delete'+id).slideToggle()
+
+        const deleteForm = document.querySelector('#delete'+id)
+
+        deleteForm.addEventListener('submit', async(e)=>{
+            e.preventDefault()
+            console.log("DELETE Class")
+            const courseID = id
+            const response = await fetch('/courses', {
+                method: "DELETE",
+                headers: {
+                    'Content-type':'application/json'
+                },
+                body: JSON.stringify({courseID})
+            })
+
+            if(response.ok){
+                console.log("RESP OK")
+                const reply = await response.json()
+                const content =  `
+                <div class="alert alert-danger">
+                    <strong>Success:</strong>  ${reply.Info.toUpperCase()} . Course id:  ${reply.id}. Reloading...
+                </div>
+                `
+                msgBlock.innerHTML = content
+                setTimeout(()=>{
+                window.location.reload()
+                },5000)
+            }else{
+                console.log("RESP NOT OK")
+                const content =  `
+                <div class="alert alert-danger">
+                    <strong>Warning:</strong> ${reply.Error.toUpperCase()} 
+                </div>
+                `
+                msgBlock.innerHTML = content
+            }
+        })
+    }
+
+
+    window.addEventListener('load', ()=>{
+        console.log("Forms Loaded")
+
+               
+    })
+</script>

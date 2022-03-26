@@ -1,0 +1,131 @@
+<link rel="stylesheet" href="css/log.css">
+
+
+<div id="msgBlock">
+
+</div>
+
+<div class="container" id="container">
+	<div class="form-container sign-up-container">
+		<form id="signupForm">
+			<h1>Create Account</h1>
+			<br>
+			<input type="text" name="reg-name" id="reg-name" placeholder="Name" required />
+			<input type="email" name="reg-email" id="reg-email" placeholder="Email" required />
+			<input type="password" name="reg-pass" id="reg-pass" placeholder="Password" required />
+			<button type="submit">Sign Up</button>
+		</form>
+	</div>
+	<div class="form-container sign-in-container">
+		<form id="loginForm">
+			<h1>Sign in</h1>
+			<br>
+			<input name="login-email" id="login-email" type="email" placeholder="Email" required />
+			<input name="login-pass" id="login-pass" type="password" placeholder="Password" required />
+			
+			<button>Login</button>
+
+		</form>
+	</div>
+	<div class="overlay-container">
+		<div class="overlay">
+			<div class="overlay-panel overlay-left">
+				<h1>Welcome Back!</h1>
+				<p>To keep connected with us please login with your personal info</p>
+				<button class="ghost" id="signIn">Login</button>
+			</div>
+			<div class="overlay-panel overlay-right">
+				<h1>Hello, Friend!</h1>
+				<p>Enter your personal details and start journey with us</p>
+				<button class="ghost" id="signUp">Sign Up</button>
+			
+</div>
+		</div>
+	</div>
+</div>
+
+     <script src="js/logi.js"></script>
+
+<script>
+	window.addEventListener('load',()=>{
+		console.log("Forms Loaded")
+		const msgBlock = document.querySelector('#msgBlock')
+
+		const signupForm = document.querySelector('#signupForm')
+		const loginForm = document.querySelector('#loginForm')
+
+		signupForm.addEventListener('submit',async(e)=>{
+			e.preventDefault()
+			console.log("Sign Up")
+			const fullName = this['reg-name'].value.trim()
+			const email = this['reg-email'].value.trim()
+			const password = this['reg-pass'].value.trim()
+			const data = JSON.stringify({fullName,email,password})
+
+			try {
+				const response = await fetch('/auth/register',{
+					method: 'POST',
+					headers: {
+						'Content-type': 'application/json'
+					},
+					body: data
+				})
+
+				if(response.ok){
+					console.log("OK")
+					const msg = await response.json()
+					msgBlock.innerHTML = `<div class="alert alert-success"><span id="msg"> <strong>Success: </strong> ${msg.Info}</span></div>`
+					setTimeout(()=>{
+						window.location.replace('/home')
+					}, 3000 )
+
+				}else{
+					console.log("NOT OK")
+					const msg = await response.json()
+					msgBlock.innerHTML = `<div class="alert alert-danger"><span id="msg"> <strong>Error: </strong> ${msg.Error}</span></div>`
+
+				}
+			}catch (error) {
+				console.log(error)
+			}
+			
+			
+			
+		})
+
+		loginForm.addEventListener('submit', async(e)=>{
+			e.preventDefault()
+			console.log("Login")
+			const email = this['login-email'].value.trim()
+			const password = this['login-pass'].value.trim()
+			const data = JSON.stringify({email, password})
+
+			try{
+				const response = await fetch('/auth/login', {
+					method:"POST",
+					headers:{
+						'Content-type':'application/json'
+					},
+					body: data
+				})
+
+				if(response.ok){
+					console.log("OK")
+					const msg = await response.json()
+					msgBlock.innerHTML = `<div class="alert alert-success"><span id="msg"> <strong>Success: </strong> ${msg.Info}</span></div>`
+					setTimeout(()=>{
+						window.location.replace('/home')
+					}, 3000 )
+				}else{
+					console.log("NOT OK")
+					const msg = await response.json()
+					msgBlock.innerHTML = `<div class="alert alert-danger"><span id="msg"> <strong>Error: </strong> ${msg.Error}</span></div>`
+				}
+
+			}catch(error){
+				console.log(error)
+
+			}
+		})
+	})
+</script>

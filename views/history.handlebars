@@ -1,0 +1,68 @@
+<style>
+   body{
+       padding: 0;
+   }
+   .row{
+       margin: 0;
+   }
+   .title-wrap{
+       display: flex;
+       align-items: center;
+   }
+   .title-wrap a {
+       /*height: 50%;*/
+       width: 10%;
+   }
+   .go-home {
+        margin-left: auto;
+        
+   }
+   .my-courses{
+       margin: auto 30px;
+   }
+
+</style>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-12 title-wrap">
+            <h1>Transaction History</h1>
+            <a class="btn btn-primary go-home" href="/home">Go HOME</a>
+            <a class="btn btn-info my-courses" href="/courses">My Courses</a>
+            <a class="btn btn-success buy-courses" href="/purchase">Buy Course</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <p>{{msg}}</p>
+        </div>
+    </div>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Card No.</th>
+                <th>Subject</th>
+                <th>Std.</th>
+                <th>Fee</th>
+                <th>Bought At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each history}}
+            <tr>
+                <td>{{name}}</td>
+                <td>{{email}}</td>
+                <td>{{cardNo}}</td>
+                <td>{{subject}}</td>
+                <td>{{std}}</td>
+                <td>{{fee}}</td>
+                <td>{{timestamp}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+

@@ -1,0 +1,88 @@
+  <link rel="stylesheet" href="css/admin.css">
+
+<div id="msgBlock"></div>
+
+<div class="bg">
+
+<div class="content">
+    
+
+
+<div class="row title">
+    <div class="col-12">
+        <h1 style="color: #fff;">ADMIN LOGIN</h1>
+    </div>
+</div>
+
+<div class="form">
+<form id="adminForm">
+  <div class="form-field">
+    <input type="email" id="adminEmail" placeholder="Username" required/>
+  </div>
+  
+  <div class="form-field">
+    <input type="password" id="adminPassword" placeholder="Password" required/>                         
+    </div>
+  
+  <div class="form-field">
+    <button class="btn" type="submit">Log in</button>
+  </div>
+</form>
+</div>
+</div>
+  </div>
+
+
+<script>
+    window.addEventListener('load', ()=>{
+        console.log("Form Loaded")
+        const msgBlock = document.querySelector('#msgBlock')
+        const adminForm = document.querySelector('#adminForm')
+        adminForm.addEventListener('submit', async(e)=>{
+            e.preventDefault()
+            console.log("SUBMITED")
+
+            const email = document.querySelector('#adminEmail').value.trim()
+            const password = document.querySelector('#adminPassword').value.trim()
+            const data = JSON.stringify({email,password})
+
+            const response = await fetch('/admin', {
+                method:"POST",
+                headers: {
+                    'Content-type':"application/json"
+                },
+                body: data
+            })
+
+            if(response.ok){
+                console.log("RESP OK")
+                const reply = await response.json()
+                const content = `
+                <div class="alert alert-success">
+                    <p>
+                        <strong>Success:</strong> ${reply.Info} Redirecting...
+                    </p>
+                </div>
+                `
+                msgBlock.innerHTML = content
+                setTimeout(()=>{
+                    window.location.replace('/admin/dashboard')
+                },5000)
+            }else{
+                console.log("RESP NOT OK")
+                const reply = await response.json()
+                const content = `
+                <div class="alert alert-danger">
+                    <p>
+                        <strong>Error:</strong> ${reply.Error}
+                    </p>
+                </div>
+                `
+                msgBlock.innerHTML = content
+            }
+        })
+
+        
+    })
+</script>
+

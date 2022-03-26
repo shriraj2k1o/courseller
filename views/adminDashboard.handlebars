@@ -1,0 +1,87 @@
+<style>
+    .title {
+        display: flex;
+        align-items: center;
+    }
+    .card-content{
+        box-shadow: 10px 10px 20px gray;
+        padding: 50px;
+        margin: 50px auto;
+
+    }
+    thead {
+        background: #333;
+        color: #fff;
+    }
+    table {
+        margin-top: 50px;
+    }
+    tbody tr:hover {
+        box-shadow: 3px 3px 20px rgb(182, 182, 182);
+
+    }
+</style>
+
+{{#if Error}}
+<div class="alert alert-danger">
+    {{Error}}
+</div>
+{{/if}}
+
+<div class="container">
+
+    <div class="row">
+        <div class="col-12 title">
+            <h1>Admin Dashboard</h1>
+            <a href="/logout" class="btn btn-primary" style="margin-left: auto;">LOGOUT</a>
+        </div>
+    </div>
+
+
+    <div class="card-content">
+
+    <div class="row">
+        <div class="col-12">
+            <h3 style="margin-left: 0.5em;">List of all Transactions</h3>
+        </div>
+    </div>
+
+    <table class="table ">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email ID</th>
+                <th>Gender</th>
+                <th>Age</th>
+                <th>Subject</th>
+                <th>Class Time</th>
+                <th>Std.</th>
+                <th>Fee</th>
+                <th>Bought At</th>
+                <th>Update At</th>
+                <th>Transaction Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each history }}
+            <tr>
+                <td>{{ name }}</td>
+                <td>{{ email }}</td>
+                <td>{{ gender }}</td>
+                <td>{{ age }}</td>
+                <td>{{ subject }}</td>
+                <td>{{ classTime }}</td>
+                <td>{{ std }}</td>
+                <td>{{ fee }}</td>
+                <td>{{ bought }}</td>
+                <td>{{ update }}</td>
+                <td>{{ type }}</td>
+            </tr>
+            {{/each }}
+        </tbody>
+    </table>
+
+    </div>
+
+
+</div>

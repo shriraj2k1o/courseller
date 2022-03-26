@@ -1,0 +1,196 @@
+<style>
+
+  *,html{
+    margin: 0;
+    padding: 0;
+  }
+  .container {
+    font-family: Arial;
+    font-size: 17px;
+    padding: 8px;
+    background-color: #f2f2f2;
+    padding: 5px 20px 15px 20px;
+    border: 1px solid lightgrey;
+    border-radius: 3px;
+  }
+  .form-content{
+    padding: 50px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 100px;
+  }
+  .form-group{
+    flex-basis: 300px;
+    flex-grow: 3;
+
+  }
+  input{
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+  }
+  button {
+    background-color: #04AA6D;
+    color: white;
+    padding: 12px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 17px;
+    font-weight: bold;
+  }
+  .f-header{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 50px;
+  }
+  .f-header h3{
+    margin: 0;
+  }
+  .f-header a {
+    background: #04AA6D;
+    color: #fff;
+    height: 100%;
+    margin-left:auto;
+    margin-right: 50px;
+    padding:5px 20px ;
+    border-radius: 5px;
+
+  }
+</style>
+
+<div class="alert alert-info " >
+  <strong>User:</strong>  {{email}}
+</div>
+
+<div id="msgBlock">
+
+</div>
+
+<div class="container">
+
+  <div class="row">
+    <div class="col-12">
+      <div class="f-header">
+        <h3 style="margin-left: 50px;">Billing Address:</h3>
+        <a href="/home" >⬅ Go Home</a>
+      </div>
+    </div>
+  </div>
+
+  <form id="purchaseForm">
+    <div class="form-content">
+      <div class="form-group">
+        <label for="fullName">Full Name:</label>
+          <input class="form-control" type="text" id="fullName" name="fullName" value="{{fullName}}" readonly>
+      </div>
+      <div class="form-group">
+        <label for="subject">Choose a Subject:</label>
+        <select class="form-control" name="subject" id="subject" required>
+          <option disabled selected value>Select Subject</option>
+          <option value="algebra">Algebra</option>
+          <option value="geometry">Geometry</option>
+          <option value="english">English</option>
+          <option value="science">Science</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="cardNo">Card No.: (16 digits)</label>
+        <input class="form-control" type="text"  pattern="\d*" name="cardNo" id="cardNo" required minlength="16" maxlength="16" placeholder="1111555599992222">
+      </div>
+      <div class="form-group">
+        <label for="classTime">Time of the Class:</label>
+        <input class="form-control" type="text" id="classTime" name="classTime" value="10:00 to 11:00" readonly required>
+      </div>
+      <div class="form-check form-group">
+        <label for="gender">Gender:</label><br>
+          <input class="form-check-input " type="radio" id="male" name="gender" value="male" required>
+        <label class="form-check-label" for="male">Male
+        </label>
+
+          <input class="form-check-input" type="radio" id="female" name="gender" value="female" required>
+        <label class="form-check-label" for="female">Female
+        </label>
+      </div>
+      <div class="form-group">
+        <label for="age">Age:</label>
+        <input class="form-control" type="number" name="age" id="age" required min="13" value="15">
+      </div>
+      <div class="form-group">
+        <label for="fee">Subject Fee - ₹:</label>
+        <input class="form-control" type="text" name="fee" id="fee" value="1000" readonly>
+      </div>
+      <div class="form-group">
+        <label for="std">Choose Std.:</label>
+        <select class="form-control" name="std" id="std" required>
+          <option disabled selected value>Select std</option>
+          <option value="9th">9th</option>
+          <option value="10th">10th</option>
+        </select>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-block">PAY</button>
+  </form>
+</div>
+
+<script>
+  window.addEventListener('load',()=>{
+    console.log("Form Loaded")
+
+    const purchaseForm = document.querySelector('#purchaseForm')
+    purchaseForm.addEventListener('submit',async(e)=>{
+      e.preventDefault()
+
+      let msgBlock = document.querySelector('#msgBlock')
+
+      const fullName = this.fullName.value.trim()
+      const subject = this.subject.value.trim()
+      const cardNo = this.cardNo.value.trim()
+      const classTime = this.classTime.value.trim()
+      const gender = document.querySelector('[name="gender"]:checked').value.trim()
+      const age = this.age.value.trim()
+      const fee = this.fee.value.trim()
+      const std = this.std.value.trim()
+
+      let data = {fullName,subject,cardNo,classTime,gender,age,fee,std}
+      data = JSON.stringify(data)
+
+      try{
+          const response = await fetch('/purchase',{
+            method: "POST",
+            headers: {
+              'Content-type':'application/json'
+            },
+            body: data
+          })
+
+          if(response.ok){
+            console.log("OK")
+            const reply = await response.json()
+            const content =  `
+              <div class="alert alert-success">
+                <strong>Success:</strong> ${reply.subject.toUpperCase()} Course purchased for ${reply.std} Std. Redirecting...
+              </div>
+            `
+            msgBlock.innerHTML = content
+            setTimeout(()=>{
+              window.location.replace('/history')
+            },5000)
+          }else{
+            console.log("NOT OK")
+            const reply = await response.json()
+            const content =  `
+              <div class="alert alert-danger">
+                <strong>Warning:</strong> ${reply.msg.toUpperCase()} 
+              </div>
+            `
+            msgBlock.innerHTML = content
+          }
+      }catch(error){
+        console.log(error)
+      }
+    })
+  })
+</script>
+
