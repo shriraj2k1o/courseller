@@ -1,6 +1,0 @@
-node_modules
-
-.admin.json
-.env
-package-lock.json 
-todo.md 
